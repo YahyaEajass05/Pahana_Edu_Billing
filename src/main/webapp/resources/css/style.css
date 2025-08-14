@@ -590,3 +590,57 @@ input[type="number"] {
     border-top: 1px solid #4a6278;
     font-size: 0.9rem;
 }
+
+/* Help Page Specific Styles */
+.help-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.help-section {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.help-section:last-child {
+    border-bottom: none;
+}
+
+.faq-item {
+    margin-bottom: 15px;
+}
+
+.faq-question {
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.faq-question:hover {
+    background-color: #e9e9e9;
+}
+
+.faq-answer {
+    padding: 15px;
+    display: none;
+    background-color: #f9f9f9;
+    border-radius: 0 0 4px 4px;
+}
+
+.contact-info p, .system-info p {
+    margin: 10px 0;
+    padding-left: 15px;
+}
+
+.contact-info strong, .system-info strong {
+    display: inline-block;
+    width: 100px;
+}
