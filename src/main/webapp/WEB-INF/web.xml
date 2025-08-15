@@ -51,10 +51,6 @@
         <servlet-class>com.pahanaedu.servlet.BillingServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ReportServlet</servlet-name>
-        <servlet-class>com.pahanaedu.servlet.ReportServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>HelpServlet</servlet-name>
         <servlet-class>com.pahanaedu.servlet.HelpServlet</servlet-class>
     </servlet>
@@ -79,10 +75,6 @@
     <servlet-mapping>
         <servlet-name>BillingServlet</servlet-name>
         <url-pattern>/billing/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ReportServlet</servlet-name>
-        <url-pattern>/reports/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>HelpServlet</servlet-name>
