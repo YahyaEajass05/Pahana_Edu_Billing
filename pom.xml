@@ -18,11 +18,12 @@
     </properties>
 
     <dependencies>
-        <!-- JSTL for JSPs -->
+        <!-- JSP -->
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-            <version>1.2</version>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- H2 Database -->
@@ -32,11 +33,11 @@
             <version>2.1.214</version>
         </dependency>
 
-        <!-- JUnit (Testing) -->
+        <!-- JUnit  -->
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.9.2</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -66,3 +67,6 @@
         </plugins>
     </build>
 </project>
+
+
+
