@@ -1,108 +1,226 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PahanaEDU - Items</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/styles.css">
-    <script src="${pageContext.request.contextPath}/resources/js/sort-table.js"></script>
+    <title>PahanaEDU - Customer Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        .status-active {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .status-inactive {
+            color: #f44336;
+            font-weight: bold;
+        }
+        .action-btn {
+            padding: 6px 12px;
+            margin: 0 3px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+        }
+        .view-btn {
+            background-color: #2196F3;
+            color: white;
+        }
+        .edit-btn {
+            background-color: #ffc107;
+            color: black;
+        }
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+        }
+        .new-btn {
+            background-color: #673ab7;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .search-filter {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        input, select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background-color: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .pagination button.active {
+            background-color: #2196F3;
+            color: white;
+            border-color: #2196F3;
+        }
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <body>
-<jsp:include page="/WEB-INF/includes/header.jsp"/>
-
-<div class="list-container">
-    <div class="list-header">
-        <h2>Item Management</h2>
-        <a href="${pageContext.request.contextPath}/items/new" class="btn-add">Add New Item</a>
+<div class="container">
+    <div class="header">
+        <h1>Customer Management</h1>
+        <a href="${pageContext.request.contextPath}/customers?action=new" class="new-btn">Add New Customer</a>
     </div>
 
-    <div class="list-controls">
-        <form class="search-form" action="${pageContext.request.contextPath}/items" method="get">
-            <input type="text" name="search" placeholder="Search items..." value="${param.search}">
-            <button type="submit" class="btn-search">Search</button>
-            <a href="${pageContext.request.contextPath}/items" class="btn-reset">Reset</a>
-        </form>
-
-        <div class="sort-options">
-            <span>Sort by:</span>
-            <a href="${pageContext.request.contextPath}/items?sort=name&dir=${sortDir == 'asc' ? 'desc' : 'asc'}&search=${param.search}"
-               class="${sortField == 'name' ? 'active' : ''}">Name</a>
-            <a href="${pageContext.request.contextPath}/items?sort=price&dir=${sortDir == 'asc' ? 'desc' : 'asc'}&search=${param.search}"
-               class="${sortField == 'price' ? 'active' : ''}">Price</a>
-            <a href="${pageContext.request.contextPath}/items?sort=quantity&dir=${sortDir == 'asc' ? 'desc' : 'asc'}&search=${param.search}"
-               class="${sortField == 'quantity' ? 'active' : ''}">Quantity</a>
-        </div>
+    <div class="search-filter">
+        <input type="text" placeholder="Search customers..." style="flex-grow: 1;">
+        <select>
+            <option value="">All Status</option>
+            <option value="ACTIVE">Active</option>
+            <option value="INACTIVE">Inactive</option>
+        </select>
+        <select>
+            <option value="">All Types</option>
+            <option value="INDIVIDUAL">Individual</option>
+            <option value="BUSINESS">Business</option>
+            <option value="EDUCATIONAL">Educational</option>
+        </select>
+        <button>Search</button>
     </div>
 
-    <c:if test="${not empty successMessage}">
-        <div class="success-message">
-                ${successMessage}
-        </div>
-    </c:if>
-
-    <c:if test="${not empty errorMessage}">
-        <div class="error-message">
-                ${errorMessage}
-        </div>
-    </c:if>
-
-    <table class="data-table sortable">
+    <table>
         <thead>
         <tr>
             <th>ID</th>
-            <th data-sort="string">Name</th>
-            <th data-sort="string">Description</th>
-            <th data-sort="float">Price</th>
-            <th data-sort="int">Quantity</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Type</th>
+            <th>Status</th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="${items}" var="item">
-            <tr>
-                <td>${item.itemId}</td>
-                <td>${item.name}</td>
-                <td>${item.description}</td>
-                <td><fmt:formatNumber value="${item.price}" type="currency"/></td>
-                <td>${item.quantity}</td>
-                <td class="actions">
-                    <a href="${pageContext.request.contextPath}/items/edit?id=${item.itemId}"
-                       class="btn-edit">Edit</a>
-                    <a href="${pageContext.request.contextPath}/items/delete?id=${item.itemId}"
-                       class="btn-delete"
-                       onclick="return confirm('Are you sure you want to delete this item?')">Delete</a>
-                </td>
-            </tr>
-        </c:forEach>
+        <!-- Sample data - would be replaced with JSTL/EL in production -->
+        <tr>
+            <td>1001</td>
+            <td>John Smith</td>
+            <td>john.smith@example.com</td>
+            <td>(555) 123-4567</td>
+            <td>Individual</td>
+            <td class="status-active">ACTIVE</td>
+            <td>
+                <a href="${pageContext.request.contextPath}/customers?action=view&id=1001" class="action-btn view-btn">View</a>
+                <a href="${pageContext.request.contextPath}/customers?action=edit&id=1001" class="action-btn edit-btn">Edit</a>
+                <a href="${pageContext.request.contextPath}/customers?action=delete&id=1001" class="action-btn delete-btn">Delete</a>
+            </td>
+        </tr>
+        <tr>
+            <td>1002</td>
+            <td>Acme Corporation</td>
+            <td>contact@acme.com</td>
+            <td>(555) 987-6543</td>
+            <td>Business</td>
+            <td class="status-active">ACTIVE</td>
+            <td>
+                <a href="${pageContext.request.contextPath}/customers?action=view&id=1002" class="action-btn view-btn">View</a>
+                <a href="${pageContext.request.contextPath}/customers?action=edit&id=1002" class="action-btn edit-btn">Edit</a>
+                <a href="${pageContext.request.contextPath}/customers?action=delete&id=1002" class="action-btn delete-btn">Delete</a>
+            </td>
+        </tr>
+        <tr>
+            <td>1003</td>
+            <td>State University</td>
+            <td>admissions@state.edu</td>
+            <td>(555) 456-7890</td>
+            <td>Educational</td>
+            <td class="status-inactive">INACTIVE</td>
+            <td>
+                <a href="${pageContext.request.contextPath}/customers?action=view&id=1003" class="action-btn view-btn">View</a>
+                <a href="${pageContext.request.contextPath}/customers?action=edit&id=1003" class="action-btn edit-btn">Edit</a>
+                <a href="${pageContext.request.contextPath}/customers?action=delete&id=1003" class="action-btn delete-btn">Delete</a>
+            </td>
+        </tr>
         </tbody>
     </table>
 
     <div class="pagination">
-        <c:if test="${currentPage > 1}">
-            <a href="${pageContext.request.contextPath}/items?page=${currentPage - 1}&sort=${sortField}&dir=${sortDir}&search=${param.search}"
-               class="page-link">&laquo; Previous</a>
-        </c:if>
-
-        <c:forEach begin="1" end="${totalPages}" var="i">
-            <c:choose>
-                <c:when test="${i == currentPage}">
-                    <span class="page-link current">${i}</span>
-                </c:when>
-                <c:otherwise>
-                    <a href="${pageContext.request.contextPath}/items?page=${i}&sort=${sortField}&dir=${sortDir}&search=${param.search}"
-                       class="page-link">${i}</a>
-                </c:otherwise>
-            </c:choose>
-        </c:forEach>
-
-        <c:if test="${currentPage < totalPages}">
-            <a href="${pageContext.request.contextPath}/items?page=${currentPage + 1}&sort=${sortField}&dir=${sortDir}&search=${param.search}"
-               class="page-link">Next &raquo;</a>
-        </c:if>
+        <button disabled>Previous</button>
+        <button class="active">1</button>
+        <button>2</button>
+        <button>3</button>
+        <button>Next</button>
     </div>
 </div>
 
-<jsp:include page="/WEB-INF/includes/footer.jsp"/>
+<script>
+    // Basic client-side interactivity
+    document.addEventListener('DOMContentLoaded', function() {
+        // Confirm before deleting
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                if (!confirm('Are you sure you want to delete this customer?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>
