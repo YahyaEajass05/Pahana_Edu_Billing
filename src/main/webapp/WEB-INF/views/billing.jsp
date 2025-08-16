@@ -1,108 +1,177 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PahanaEDU - Billing</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/styles.css">
-    <script src="${pageContext.request.contextPath}/resources/js/validation.js"></script>
+    <title>PahanaEDU - Billing Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        .status-pending {
+            color: #ff9800;
+            font-weight: bold;
+        }
+        .status-paid {
+            color: #4caf50;
+            font-weight: bold;
+        }
+        .status-cancelled {
+            color: #f44336;
+            font-weight: bold;
+        }
+        .action-btn {
+            padding: 6px 12px;
+            margin: 0 3px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+        }
+        .view-btn {
+            background-color: #2196F3;
+            color: white;
+        }
+        .edit-btn {
+            background-color: #ffc107;
+            color: black;
+        }
+        .pay-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .cancel-btn {
+            background-color: #f44336;
+            color: white;
+        }
+        .new-btn {
+            background-color: #673ab7;
+            color: white;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+        }
+        .search-filter {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+        }
+        input, select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
-<jsp:include page="/WEB-INF/includes/header.jsp"/>
-
-<div class="billing-container">
-    <h2>Generate New Bill</h2>
-
-    <form id="billingForm" action="${pageContext.request.contextPath}/billing/create" method="post">
-        <div class="form-group">
-            <label for="customerId">Customer:</label>
-            <select id="customerId" name="customerId" required>
-                <option value="">Select Customer</option>
-                <c:forEach items="${customers}" var="customer">
-                    <option value="${customer.customerId}">
-                            ${customer.firstName} ${customer.lastName} (${customer.email})
-                    </option>
-                </c:forEach>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label>Items:</label>
-            <table id="itemsTable">
-                <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                <c:forEach items="${items}" var="item">
-                    <tr>
-                        <td>${item.name}</td>
-                        <td>
-                            <input type="number" name="itemQty_${item.itemId}"
-                                   min="1" max="100" value="1" class="qty-input">
-                        </td>
-                        <td class="price"><fmt:formatNumber value="${item.price}" type="currency"/></td>
-                        <td>
-                            <input type="checkbox" name="selectedItems" value="${item.itemId}">
-                        </td>
-                    </tr>
-                </c:forEach>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="form-actions">
-            <button type="submit" class="btn-generate">Generate Bill</button>
-        </div>
-    </form>
-
-    <div class="total-section">
-        <h3>Total: <span id="totalAmount">$0.00</span></h3>
+<div class="container">
+    <div class="header">
+        <h1>Billing Management</h1>
+        <a href="${pageContext.request.contextPath}/billings?action=new" class="action-btn new-btn">Create New Billing</a>
     </div>
 
-    <c:if test="${not empty successMessage}">
-        <div class="success-message">
-                ${successMessage}
-        </div>
-    </c:if>
+    <div class="search-filter">
+        <input type="text" placeholder="Search billings...">
+        <select>
+            <option value="">All Status</option>
+            <option value="PENDING">Pending</option>
+            <option value="PAID">Paid</option>
+            <option value="CANCELLED">Cancelled</option>
+        </select>
+        <input type="date">
+        <input type="date">
+        <button>Filter</button>
+    </div>
 
-    <c:if test="${not empty errorMessage}">
-        <div class="error-message">
-                ${errorMessage}
+    <table>
+        <thead>
+        <tr>
+            <th>Billing ID</th>
+            <th>Account</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Sample data - would be replaced with JSTL/EL in production -->
+        <tr>
+            <td>1001</td>
+            <td>Acme Corp (ID: 45)</td>
+            <td>2023-05-15</td>
+            <td>$1,250.00</td>
+            <td class="status-pending">PENDING</td>
+            <td>
+                <a href="${pageContext.request.contextPath}/billings?action=view&id=1001" class="action-btn view-btn">View</a>
+                <a href="${pageContext.request.contextPath}/billings?action=edit&id=1001" class="action-btn edit-btn">Edit</a>
+                <a href="${pageContext.request.contextPath}/billings?action=pay&id=1001" class="action-btn pay-btn">Mark Paid</a>
+                <a href="${pageContext.request.contextPath}/billings?action=cancel&id=1001" class="action-btn cancel-btn">Cancel</a>
+            </td>
+        </tr>
+        <tr>
+            <td>1002</td>
+            <td>Global Edu (ID: 32)</td>
+            <td>2023-05-10</td>
+            <td>$890.50</td>
+            <td class="status-paid">PAID</td>
+            <td>
+                <a href="${pageContext.request.contextPath}/billings?action=view&id=1002" class="action-btn view-btn">View</a>
+            </td>
+        </tr>
+        <tr>
+            <td>1003</td>
+            <td>Tech Institute (ID: 28)</td>
+            <td>2023-05-05</td>
+            <td>$2,150.75</td>
+            <td class="status-cancelled">CANCELLED</td>
+            <td>
+                <a href="${pageContext.request.contextPath}/billings?action=view&id=1003" class="action-btn view-btn">View</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div style="margin-top: 20px; text-align: center;">
+        <span>Showing 1 to 3 of 3 entries</span>
+        <div style="margin-top: 10px;">
+            <button disabled>Previous</button>
+            <button style="background-color: #ddd;" disabled>1</button>
+            <button disabled>Next</button>
         </div>
-    </c:if>
+    </div>
 </div>
-
-<jsp:include page="/WEB-INF/includes/footer.jsp"/>
-
-<script>
-    // Calculate total when items are selected
-    document.querySelectorAll('input[name="selectedItems"]').forEach(item => {
-        item.addEventListener('change', calculateTotal);
-    });
-
-    // Quantity change listeners
-    document.querySelectorAll('.qty-input').forEach(input => {
-        input.addEventListener('change', calculateTotal);
-    });
-
-    function calculateTotal() {
-        let total = 0;
-        document.querySelectorAll('input[name="selectedItems"]:checked').forEach(checkbox => {
-            const itemId = checkbox.value;
-            const row = checkbox.closest('tr');
-            const priceText = row.querySelector('.price').textContent;
-            const price = parseFloat(priceText.replace(/[^0-9.-]+/g,""));
-            const qty = parseInt(row.querySelector('.qty-input').value);
-            total += price * qty;
-        });
-        document.getElementById('totalAmount').textContent = '$' + total.toFixed(2);
-    }
-</script>
 </body>
 </html>
