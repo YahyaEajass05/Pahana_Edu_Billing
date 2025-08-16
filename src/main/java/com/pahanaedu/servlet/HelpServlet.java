@@ -30,9 +30,9 @@ public class HelpServlet extends HttpServlet {
 
         if (searchQuery != null && !searchQuery.trim().isEmpty()) {
             request.setAttribute("searchResults", performHelpSearch(searchQuery));
-            request.getRequestDispatcher("/WEB-INF/views/help.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/help-search.jsp").forward(request, response);
         } else {
-            response.sendRedirect("help");
+            response.sendRedirect(request.getContextPath() + "/help");
         }
     }
 
@@ -42,14 +42,27 @@ public class HelpServlet extends HttpServlet {
         }
 
         switch (topic.toLowerCase()) {
-            case "billing":
-                return "help-billing.jsp";
+            case "getting-started":
+                return "help-getting-started.jsp";
             case "account":
                 return "help-account.jsp";
+            case "billing":
+                return "help-billing.jsp";
             case "inventory":
                 return "help-inventory.jsp";
             case "reporting":
                 return "help-reporting.jsp";
+            case "troubleshooting":
+                return "help-troubleshooting.jsp";
+            case "password-reset":
+            case "two-factor":
+            case "export-data":
+            case "permissions":
+            case "notifications":
+            case "keyboard-shortcuts":
+            case "mobile-access":
+            case "data-import":
+                return "help-topic-detail.jsp";
             case "faq":
                 return "help-faq.jsp";
             default:
